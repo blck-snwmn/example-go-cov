@@ -1,25 +1,38 @@
 # example-go-cov
 
-Go言語のコードカバレッジ計測サンプルです。
+Go言語のコードカバレッジ計測サンプルです。このプロジェクトは、Go言語でのテストカバレッジの計測方法と、それをGitHub Actionsで自動化する基本的な方法を示すことを目的としています。
 
 ## カバレッジの取得方法
 
+### 基本的なカバレッジ確認方法
+
+各パッケージのカバレッジ率を表示するには、以下のコマンドを実行します：
+
 ```bash
-# テスト実行とカバレッジプロファイル生成
-go test -v -coverprofile=coverage.out ./...
-
-# カバレッジパーセンテージの確認
-go tool cover -func=coverage.out
-
-# HTML形式のレポート生成
-go tool cover -html=coverage.out -o coverage.html
+go test ./... -cover
 ```
 
-## GitHub Actions連携
+このコマンドは、各パッケージに対して単体でカバレッジ率（％）を表示します。
 
-`.github/workflows/coverage.yml` で以下を自動化:
-- テスト実行とカバレッジ計測
-- カバレッジ率のレポート生成
+### 詳細なカバレッジレポートの生成
+
+より詳細なカバレッジレポートを生成するには、以下のコマンドを使用します：
+
+```bash
+go test ./... -coverprofile=coverage.out
+```
+
+このコマンドは `coverage.out` ファイルを生成します。
+
+### 関数ごとのカバレッジの確認
+
+生成したカバレッジプロファイルから、関数ごとのカバレッジ情報を表示するには：
+
+```bash
+go tool cover -func=coverage.out
+```
+
+このコマンドは各関数のカバレッジ率を表示し、最後にプロジェクト全体のステートメントカバレッジの合計も表示します。
 
 ## ライセンス
 
