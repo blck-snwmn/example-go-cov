@@ -1,3 +1,3 @@
 module github.com/blck-snwmn/example-go-cov
 
-go 1.24.2
+go 1.27.0
