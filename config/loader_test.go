@@ -38,11 +38,7 @@ func TestNewDefaultConfig(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	// Create a temporary directory for test files
-	tempDir, err := os.MkdirTemp("", "config_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	// Create a valid config file
 	validConfig := `{
@@ -60,7 +56,7 @@ func TestLoadFromFile(t *testing.T) {
 	}`
 
 	validConfigFile := filepath.Join(tempDir, "valid_config.json")
-	err = os.WriteFile(validConfigFile, []byte(validConfig), 0644)
+	err := os.WriteFile(validConfigFile, []byte(validConfig), 0644)
 	if err != nil {
 		t.Fatalf("Failed to create test config file: %v", err)
 	}

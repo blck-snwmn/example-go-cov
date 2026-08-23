@@ -52,7 +52,8 @@ func CalculateVariance(numbers []float64) (float64, error) {
 	sum := 0.0
 
 	for _, num := range numbers {
-		sum += math.Pow(num-mean, 2)
+		difference := num - mean
+		sum += difference * difference
 	}
 
 	// Using sample variance (n-1 denominator)

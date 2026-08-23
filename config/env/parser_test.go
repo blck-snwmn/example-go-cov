@@ -11,20 +11,22 @@ func TestParseEnvVars(t *testing.T) {
 	originalEnv := os.Environ()
 
 	// Clean up environment after tests
-	defer func() {
+	t.Cleanup(func() {
 		os.Clearenv()
 		for _, e := range originalEnv {
 			key, value, _ := SplitEnvVar(e)
-			os.Setenv(key, value)
+			if err := os.Setenv(key, value); err != nil {
+				t.Errorf("Failed to restore environment variable %q: %v", key, err)
+			}
 		}
-	}()
+	})
 
 	// Setup test environment
 	os.Clearenv()
-	os.Setenv("APP_NAME", "TestApp")
-	os.Setenv("APP_VERSION", "1.0.0")
-	os.Setenv("APP_DEBUG", "true")
-	os.Setenv("OTHER_VAR", "ignored")
+	setEnv(t, "APP_NAME", "TestApp")
+	setEnv(t, "APP_VERSION", "1.0.0")
+	setEnv(t, "APP_DEBUG", "true")
+	setEnv(t, "OTHER_VAR", "ignored")
 
 	// Test with APP_ prefix
 	config := ParseEnvVars("APP_")
@@ -126,6 +128,13 @@ func TestGetBool(t *testing.T) {
 				t.Errorf("GetBool(%q, %v) = %v, want %v", tt.key, tt.defaultValue, got, tt.expected)
 			}
 		})
+	}
+}
+
+func setEnv(t *testing.T, key, value string) {
+	t.Helper()
+	if err := os.Setenv(key, value); err != nil {
+		t.Fatalf("Failed to set environment variable %q: %v", key, err)
 	}
 }
 

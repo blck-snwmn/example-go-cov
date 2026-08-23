@@ -34,12 +34,16 @@ func ParseArray(data string) (JSONArray, error) {
 }
 
 // ReadJSONFile reads a JSON file and parses it into a JSONObject
-func ReadJSONFile(filename string) (JSONObject, error) {
+func ReadJSONFile(filename string) (result JSONObject, err error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	data, err := io.ReadAll(file)
 	if err != nil {
@@ -50,12 +54,16 @@ func ReadJSONFile(filename string) (JSONObject, error) {
 }
 
 // ReadJSONArrayFile reads a JSON file and parses it into a JSONArray
-func ReadJSONArrayFile(filename string) (JSONArray, error) {
+func ReadJSONArrayFile(filename string) (result JSONArray, err error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	data, err := io.ReadAll(file)
 	if err != nil {

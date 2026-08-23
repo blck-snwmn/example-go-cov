@@ -1,24 +1,19 @@
 package fileutil
 
 import (
-	"os"
 	"testing"
 )
 
 func TestWriteFile(t *testing.T) {
 	// Create a temporary directory for our test files
-	tempDir, err := os.MkdirTemp("", "writefile_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	// Test file path
 	testFile := tempDir + "/test_write.txt"
 	testContent := "Hello, World!"
 
 	// Test writing
-	err = WriteFile(testFile, testContent)
+	err := WriteFile(testFile, testContent)
 	if err != nil {
 		t.Fatalf("WriteFile() error = %v", err)
 	}
@@ -36,11 +31,7 @@ func TestWriteFile(t *testing.T) {
 
 func TestWriteLines(t *testing.T) {
 	// Create a temporary directory for our test files
-	tempDir, err := os.MkdirTemp("", "writelines_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	// Test file path
 	testFile := tempDir + "/test_write_lines.txt"
@@ -48,7 +39,7 @@ func TestWriteLines(t *testing.T) {
 	expectedContent := "Line 1\nLine 2\nLine 3\n"
 
 	// Test writing
-	err = WriteLines(testFile, testLines)
+	err := WriteLines(testFile, testLines)
 	if err != nil {
 		t.Fatalf("WriteLines() error = %v", err)
 	}
@@ -66,11 +57,7 @@ func TestWriteLines(t *testing.T) {
 
 func TestAppendToFile(t *testing.T) {
 	// Create a temporary directory for our test files
-	tempDir, err := os.MkdirTemp("", "appendfile_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	// Test file path
 	testFile := tempDir + "/test_append.txt"
@@ -79,7 +66,7 @@ func TestAppendToFile(t *testing.T) {
 	expectedContent := initialContent + appendedContent
 
 	// Create initial file
-	err = WriteFile(testFile, initialContent)
+	err := WriteFile(testFile, initialContent)
 	if err != nil {
 		t.Fatalf("Failed to create initial test file: %v", err)
 	}

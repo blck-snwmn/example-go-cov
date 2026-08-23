@@ -50,8 +50,26 @@ func TestToLower(t *testing.T) {
 	}
 }
 
-// We skip testing ToTitle to deliberately leave it uncovered
-// This helps us achieve a coverage of around 50%
+func TestToTitle(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"words", "hello world", "Hello World"},
+		{"punctuation", "don't stop", "Don'T Stop"},
+		{"underscore", "hello_world", "Hello_world"},
+		{"unicode", "élan vital", "Élan Vital"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ToTitle(tt.input); got != tt.expected {
+				t.Errorf("ToTitle(%q) = %q, want %q", tt.input, got, tt.expected)
+			}
+		})
+	}
+}
 
 func TestToCamelCase(t *testing.T) {
 	tests := []struct {

@@ -17,7 +17,21 @@ func ToLower(s string) string {
 
 // ToTitle converts a string to title case
 func ToTitle(s string) string {
-	return strings.Title(s)
+	previous := ' '
+	return strings.Map(func(r rune) rune {
+		if isTitleSeparator(previous) {
+			r = unicode.ToTitle(r)
+		}
+		previous = r
+		return r
+	}, s)
+}
+
+func isTitleSeparator(r rune) bool {
+	if r <= unicode.MaxASCII {
+		return r != '_' && !unicode.IsLetter(r) && !unicode.IsDigit(r)
+	}
+	return unicode.IsSpace(r)
 }
 
 // ToCamelCase converts a string to camelCase

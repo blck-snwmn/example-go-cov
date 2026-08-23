@@ -12,12 +12,16 @@ func WriteFile(filename, content string) error {
 }
 
 // WriteLines writes a slice of strings to a file, one line per string
-func WriteLines(filename string, lines []string) error {
+func WriteLines(filename string, lines []string) (err error) {
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	writer := bufio.NewWriter(file)
 	for _, line := range lines {
@@ -31,24 +35,32 @@ func WriteLines(filename string, lines []string) error {
 }
 
 // AppendToFile appends a string to a file
-func AppendToFile(filename, content string) error {
+func AppendToFile(filename, content string) (err error) {
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	_, err = file.WriteString(content)
 	return err
 }
 
 // AppendLines appends a slice of strings to a file, one line per string
-func AppendLines(filename string, lines []string) error {
+func AppendLines(filename string, lines []string) (err error) {
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	writer := bufio.NewWriter(file)
 	for _, line := range lines {
@@ -90,12 +102,16 @@ func DeleteFile(filename string) error {
 }
 
 // TruncateFile truncates a file to zero size
-func TruncateFile(filename string) error {
+func TruncateFile(filename string) (err error) {
 	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
 	return nil
 }

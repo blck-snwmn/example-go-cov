@@ -112,7 +112,9 @@ func LoadFromEnv(prefix string) Config {
 			case "host":
 				config.Host = value
 			case "port":
-				fmt.Sscanf(value, "%d", &config.Port)
+				if _, err := fmt.Sscanf(value, "%d", &config.Port); err != nil {
+					continue
+				}
 			case "debug":
 				config.Debug = strings.ToLower(value) == "true" || value == "1"
 			default:

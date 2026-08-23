@@ -7,19 +7,16 @@ import (
 
 func TestFileExists(t *testing.T) {
 	// Create a temporary file
-	tempFile, err := os.CreateTemp("", "fileexists_test_*.txt")
+	tempFile, err := os.CreateTemp(t.TempDir(), "fileexists_test_*.txt")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	tempFile.Close()
-	defer os.Remove(tempFile.Name())
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Create a temporary directory
-	tempDir, err := os.MkdirTemp("", "fileexists_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	tests := []struct {
 		name     string
@@ -43,19 +40,16 @@ func TestFileExists(t *testing.T) {
 
 func TestDirExists(t *testing.T) {
 	// Create a temporary file
-	tempFile, err := os.CreateTemp("", "direxists_test_*.txt")
+	tempFile, err := os.CreateTemp(t.TempDir(), "direxists_test_*.txt")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	tempFile.Close()
-	defer os.Remove(tempFile.Name())
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	// Create a temporary directory
-	tempDir, err := os.MkdirTemp("", "direxists_test_dir")
-	if err != nil {
-		t.Fatalf("Failed to create temp directory: %v", err)
-	}
-	defer os.RemoveAll(tempDir)
+	tempDir := t.TempDir()
 
 	tests := []struct {
 		name     string
@@ -80,13 +74,16 @@ func TestDirExists(t *testing.T) {
 func TestReadFile(t *testing.T) {
 	// Create a temporary file with content
 	content := "Hello, World!"
-	tempFile, err := os.CreateTemp("", "readfile_test_*.txt")
+	tempFile, err := os.CreateTemp(t.TempDir(), "readfile_test_*.txt")
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	tempFile.WriteString(content)
-	tempFile.Close()
-	defer os.Remove(tempFile.Name())
+	if _, err := tempFile.WriteString(content); err != nil {
+		t.Fatalf("Failed to write temp file: %v", err)
+	}
+	if err := tempFile.Close(); err != nil {
+		t.Fatalf("Failed to close temp file: %v", err)
+	}
 
 	tests := []struct {
 		name        string

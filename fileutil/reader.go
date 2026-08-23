@@ -18,14 +18,17 @@ func ReadFile(filename string) (string, error) {
 }
 
 // ReadLines reads a file line by line and returns the lines as a slice of strings
-func ReadLines(filename string) ([]string, error) {
+func ReadLines(filename string) (lines []string, err error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
-	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
@@ -84,7 +87,7 @@ func FindFiles(dirname, pattern string) ([]string, error) {
 }
 
 // ReadChunks reads a file in chunks of specified size
-func ReadChunks(filename string, chunkSize int) ([][]byte, error) {
+func ReadChunks(filename string, chunkSize int) (chunks [][]byte, err error) {
 	if chunkSize <= 0 {
 		return nil, errors.New("chunk size must be positive")
 	}
@@ -93,15 +96,18 @@ func ReadChunks(filename string, chunkSize int) ([][]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); err == nil {
+			err = closeErr
+		}
+	}()
 
-	var chunks [][]byte
 	buffer := make([]byte, chunkSize)
 
 	for {
-		bytesRead, err := file.Read(buffer)
-		if err != nil && err != io.EOF {
-			return nil, err
+		bytesRead, readErr := file.Read(buffer)
+		if readErr != nil && readErr != io.EOF {
+			return nil, readErr
 		}
 
 		if bytesRead == 0 {
@@ -113,7 +119,7 @@ func ReadChunks(filename string, chunkSize int) ([][]byte, error) {
 		copy(chunk, buffer[:bytesRead])
 		chunks = append(chunks, chunk)
 
-		if err == io.EOF {
+		if readErr == io.EOF {
 			break
 		}
 	}
